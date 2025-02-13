@@ -3,8 +3,7 @@ pipeline {
 
     tools {
        nodejs 'nodejs-23.7.0'
-    }
-     
+    } 
     stages {
         stage('version check') {
             steps {
