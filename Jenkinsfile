@@ -1,4 +1,4 @@
- pipeline {
+pipeline {
     agent any
 
     tools {
@@ -14,10 +14,12 @@
                 '''
             }
         }
-    }  // Missing closing brace added here
-}  // This was missing
-
-       
-
+        stage('Installing Dependencies') {
+            steps {
+                sh 'npm install --no-audit'
+            }
+        }
+    }  
+}  
        
  
