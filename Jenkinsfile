@@ -11,7 +11,7 @@ pipeline {
                 sh '''
                     node -v
                     npm -v
-                    npm install mongoose@6.13.6
+                    npm install mongoose@8.9.5
                 '''
             }
         }
