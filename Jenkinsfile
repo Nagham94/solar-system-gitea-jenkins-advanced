@@ -11,6 +11,7 @@ pipeline {
                 sh '''
                     node -v
                     npm -v
+                    npm install mongoose@<=6.13.5
                 '''
             }
         }
