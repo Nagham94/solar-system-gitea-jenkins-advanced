@@ -8,6 +8,10 @@ pipeline {
     
     environment {
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner-6.1.0.447'
+        MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+        MONGO_DB_CREDS = credentials('mongodb-cred')
+        MONGO_USERNAME = credentials('mongo-db-username')
+        MONGO_PASSWORD = credentials('mongo-db-password')
     }
 
    // options {}
@@ -84,38 +88,42 @@ pipeline {
                 script {
                     // Angular, React, Svelte, Vue.js, Node.js
                     if (fileExists('package.json')) {
-                        sh 'npm test || echo "Tests failed, but continuing"'
+                        withCredentials([usernamePassword(credentialsId: 'mongodb-cred', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                        sh 'npm test'
+                        }
                     }
 
                     // Django
                     if (fileExists('manage.py')) {
-                        sh 'python manage.py test || echo "Tests failed, but continuing"'
+                        sh 'python manage.py test'
                     }
 
                     // Flask
                     if (fileExists('requirements.txt') && fileExists('tests/')) {
-                        sh 'pytest || echo "Tests failed, but continuing"'
+                        sh 'pytest'
                     }
 
                     // Golang
                     if (fileExists('go.mod')) {
-                        sh 'go test ./... || echo "Tests failed, but continuing"'
+                        sh 'go test ./...'
                     }
 
                     // Laravel (PHPUnit)
                     if (fileExists('artisan')) {
-                        sh 'php artisan test || echo "Tests failed, but continuing"'
+                        sh 'php artisan test'
                     }
 
                     // PHP (Using PHPUnit framework)
                     if (fileExists('composer.json')) {
-                        sh 'vendor/bin/phpunit || echo "Tests failed, but continuing"'
+                        sh 'vendor/bin/phpunit'
                     }
 
                     // WordPress (Using WP test framework)
                     if (fileExists('wp-config.php')) {
-                        sh 'wp test run || echo "Tests failed, but continuing"'
+                        sh 'wp test run'
                     }
+                    // to publish the test report in the UI of blue ocean
+                    junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'test-results.xml'
                 }
             }
         }
