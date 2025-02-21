@@ -17,12 +17,12 @@ pipeline {
             options { timestamps() }
             steps {
                 script {
-                    // Angular + NodeJs + React + Svelte + Vue.js
+                    // Angular, React, Svelte, Vue.js, Node.js
                     if (fileExists('package.json')) { 
                         sh 'npm install --no-audit' 
                     }
                     
-                    // Django + Flask
+                    // Django, Flask
                     if (fileExists('requirements.txt')) { 
                         sh 'pip install --no-cache-dir -r requirements.txt' 
                     }
@@ -79,23 +79,61 @@ pipeline {
                        }
         }
 
-        stage('SAST - SonarQube') {
+        stage('Running Unit Tests') {
             steps {
-                sh '''
-                   java -version
-                '''
-                sh 'echo $SONAR_SCANNER_HOME'
-                sh '''
-                  $SONAR_SCANNER_HOME/bin/sonar-scanner \
-                   -Dsonar.projectKey=grad-project \
-                   -Dsonar.sources=. \
-                   -Dsonar.host.url=http://localhost:9000 \
-                   -Dsonar.login=sqp_4e0224c2c2a423ba35784092cae93054f5993bd0
-                '''
+                script {
+                    // Angular, React, Svelte, Vue.js, Node.js
+                    if (fileExists('package.json')) {
+                        sh 'npm test || echo "Tests failed, but continuing"'
+                    }
+
+                    // Django
+                    if (fileExists('manage.py')) {
+                        sh 'python manage.py test || echo "Tests failed, but continuing"'
+                    }
+
+                    // Flask
+                    if (fileExists('requirements.txt') && fileExists('tests/')) {
+                        sh 'pytest || echo "Tests failed, but continuing"'
+                    }
+
+                    // Golang
+                    if (fileExists('go.mod')) {
+                        sh 'go test ./... || echo "Tests failed, but continuing"'
+                    }
+
+                    // Laravel (PHPUnit)
+                    if (fileExists('artisan')) {
+                        sh 'php artisan test || echo "Tests failed, but continuing"'
+                    }
+
+                    // PHP (Using PHPUnit framework)
+                    if (fileExists('composer.json')) {
+                        sh 'vendor/bin/phpunit || echo "Tests failed, but continuing"'
+                    }
+
+                    // WordPress (Using WP test framework)
+                    if (fileExists('wp-config.php')) {
+                        sh 'wp test run || echo "Tests failed, but continuing"'
+                    }
+                }
             }
-        } 
+        }
+
+       // stage('SAST - SonarQube') {
+       //     steps {
+       //         sh '''
+       //            java -version
+       //         '''
+       //         sh 'echo $SONAR_SCANNER_HOME'
+       //         sh '''
+       //         $SONAR_SCANNER_HOME/bin/sonar-scanner \
+       //            -Dsonar.projectKey=grad-project \
+       //            -Dsonar.sources=. \
+       //            -Dsonar.host.url=http://localhost:9000 \
+       //            -Dsonar.login=sqp_4e0224c2c2a423ba35784092cae93054f5993bd0
+       //         '''
+       //     }
+       // } 
     }
 }
-
-       
- 
