@@ -10,8 +10,8 @@ pipeline {
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner-6.1.0.447'
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
         MONGO_DB_CREDS = credentials('mongodb-cred')
-        MONGO_USERNAME = credentials('mongo-db-username')
-        MONGO_PASSWORD = credentials('mongo-db-password')
+        //MONGO_USERNAME = credentials('mongo-db-username')
+        //MONGO_PASSWORD = credentials('mongo-db-password')
     }
 
    // options {}
